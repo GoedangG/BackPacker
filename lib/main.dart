@@ -1,4 +1,4 @@
-import 'package:bayu_inventory/menu.dart';
+import 'package:bayu_inventory/screens/menu.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'BackPacker',
       theme: ThemeData(
         // This is the theme of your application.
         //
