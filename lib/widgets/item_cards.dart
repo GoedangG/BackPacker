@@ -35,9 +35,9 @@ class ShopCard extends StatelessWidget {
             );
           }
 
-          if (item.name == "Lihat Item"){
+          if (item.name == "Lihat Isi Tas"){
             Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const LihatItem())
+            MaterialPageRoute(builder: (context) => LihatItem(itemList: Item.itemList))
             );
           }
         },

@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:bayu_inventory/widgets/left_drawer.dart';
 
+class Item {
+  static List<Item> itemList = [];
+  String name;
+  int amount;
+  String description;
+
+  Item(this.name, this.amount, this.description);
+}
+
 class BackPackForm extends StatefulWidget{
   const BackPackForm({super.key});
   
@@ -135,6 +144,7 @@ class _BackPackFormState extends State<BackPackForm> {
                                   child: const Text('OK'),
                                   onPressed: (){
                                     Navigator.pop(context);
+                                    Item.itemList.add(Item(_name, _amount, _description));
                                   },
                                 ),
                               ],

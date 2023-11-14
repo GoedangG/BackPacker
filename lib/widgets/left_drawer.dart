@@ -27,7 +27,7 @@ class LeftDrawer extends StatelessWidget {
                   ),
                 ),
                 Padding(padding: EdgeInsets.all(10)),
-                Text("Catat seluruh barang yang kamu butuhkan di sini!",
+                Text("Solusi Untuk Kamu Yang Pelupa!",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 15,
@@ -68,7 +68,7 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const  LihatItem()),
+                  builder: (context) => LihatItem(itemList: Item.itemList)),
                 );
             },
           )

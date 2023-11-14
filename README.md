@@ -174,3 +174,242 @@
         }
     }
 ```
+
+# TUGAS 8
+
+### 1. Jelaskan perbedaan antara `Navigator.push()` dan `Navigator.pushReplacement()`, disertai dengan contoh mengenai penggunaan kedua metode tersebut yang tepat!
+1. `Navigator.push`:
+- Metode ini digunakan untuk menambahkan layar baru ke tumpukan (stack) navigasi.
+- Ketika menggunakan Navigator.push(), layar baru ditambahkan di atas layar yang ada di tumpukan, dan pengguna dapat kembali ke layar sebelumnya dengan menekan tombol kembali.
+- Cocok digunakan ketika ingin menambahkan layar baru dan memungkinkan pengguna untuk kembali ke layar sebelumnya.
+
+2. `Navigator.pushReplacement()`:
+- Metode ini digunakan untuk menambahkan layar baru ke tumpukan dan menggantikan layar yang ada di tumpukan dengan layar baru.
+- Ketika menggunakan Navigator.pushReplacement(), layar yang ada di bawah layar baru dihapus dari tumpukan, sehingga ketika pengguna menekan tombol kembali, mereka langsung kembali ke layar sebelumnya sebelum layar yang baru ditambahkan.
+- Cocok digunakan ketika ingin menggantikan layar saat ini dengan layar baru dan tidak ingin pengguna kembali ke layar sebelumnya.
+
+### 2. Jelaskan masing-masing layout widget pada Flutter dan konteks penggunaannya masing-masing!
+- `Container` : Digunakan untuk mengelompokkan widget lain dan mengatur terhadap layout attribute seperti margin dan padding.
+- `Column` : Digunakan untuk menampilkan widget dalam susunan vertikal.
+- `Row` : Digunakan untuk menampilkan widget dalam susunan horizontal.
+- `ListView` : Digunakan untuk menampilkan daftar elemen scrollable.
+- `Stack` : Digunakan untuk "menumpuk" widget satu di atas yang lain.
+
+### 3. Sebutkan apa saja elemen input pada form yang kamu pakai pada tugas kali ini dan jelaskan mengapa kamu menggunakan elemen input tersebut!
+Pada tugas kali ini saya hanya menggunakan `TextFormField()` karena pada tugas kali ini hanya membutuhkan input berupa `String` dan `integer`.
+
+### 4. Bagaimana penerapan clean architecture pada aplikasi Flutter?
+Penerapannya dibagi menjadi 3 lapisan utama:
+1. Domain Layer:
+- Berisi aturan bisnis atau logika inti aplikasi.
+- Tidak bergantung pada detail implementasi atau teknologi tertentu.
+- Termasuk use case, entitas, dan repositori yang menentukan kontrak untuk mengakses data.
+
+2. Data Layer:
+- Menangani pengambilan dan penyimpanan data.
+- Implementasi dari repositori dan sumber data (API, database, dll.) 
+- Merupakan jembatan antara Domain Layer dan Presentation Layer.
+
+3. Presentation Layer:
+- Menangani tampilan dan antarmuka pengguna.
+- Bergantung pada Domain Layer, tetapi tidak mengetahui detail implementasi Data Layer.
+- State management, UI, dan navigasi berada di dalamnya.
+
+### 4.  Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial)
+1. membuat file `BackPackForm.dart` didalam folder `lib/screens` dan menambahkan code berikut:
+    ```
+    import 'package:flutter/material.dart';
+    import 'package:bayu_inventory/widgets/left_drawer.dart';
+
+    class Item {
+    static List<Item> itemList = [];
+    String name;
+    int amount;
+    String description;
+
+    Item(this.name, this.amount, this.description);
+    }
+
+    class BackPackForm extends StatefulWidget{
+    const BackPackForm({super.key});
+    
+    @override
+    State<BackPackForm> createState() => _BackPackFormState();
+    }
+
+    class _BackPackFormState extends State<BackPackForm> {
+    final _formkey = GlobalKey<FormState>();
+    String _name = "";
+    int _amount = 0;
+    String _description = "";
+    
+    @override
+    Widget build(BuildContext context){
+        return Scaffold(
+        appBar: AppBar(
+            title: const Center(
+            child: Text(
+                'Form Tambah Item',
+            ),
+            ),
+            backgroundColor: Colors.indigo,
+            foregroundColor: Colors.white,
+        ),
+        drawer: const LeftDrawer(),
+        body: Form(
+            key: _formkey,
+            child: SingleChildScrollView(
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                    decoration: InputDecoration(
+                    hintText: "Nama Item",
+                    labelText: "Nama Item",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0)
+                    )
+                    ),
+                    onChanged: (String? value){
+                    setState(() {
+                        _name = value!;
+                    });
+                    },
+                    validator: (String? value){
+                    if (value == null || value.isEmpty){
+                        return "Nama Item tidak boleh kosong!";
+                    }
+                    return null;
+                    },
+                ),
+                ),
+                Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                    decoration: InputDecoration(
+                    hintText: "Jumlah",
+                    labelText: "Jumlah",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    ),
+                    onChanged: (String? value){
+                    setState(() {
+                        _amount = int.parse(value!);
+                    });
+                    },
+                    validator: (String? value){
+                    if (value == null || value.isEmpty){
+                        return "Jumlah Item tidak boleh kosong";
+                    }
+
+                    if(int.tryParse(value) == null){
+                        return "Harus berupa angka!";
+                    }
+            
+                    return null;
+                    },
+                ),
+                ),
+                Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                    decoration: InputDecoration(
+                    hintText: "Description",
+                    labelText: "Description",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0)
+                    ),
+                    ),
+                    onChanged: (String? value){
+                    setState(() {
+                        _description = value!;
+                    });
+                    },
+                    validator: (String? value){
+                    if (value == null || value.isEmpty){
+                        return "Description tidak boleh kosong!";
+                    }
+                    return null;
+                    },
+                ), 
+                ),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.green),
+                        ),
+                        onPressed: (){
+                        if (_formkey.currentState!.validate()){
+                            showDialog(
+                            context: context,
+                            builder: (context){
+                                return AlertDialog(
+                                title:  const Text('Item berhasil tersimpan'),
+                                content: SingleChildScrollView(
+                                    child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                        Text('Nama Item: $_name'),
+                                        Text('Amount: $_amount'),
+                                        Text('Description: $_description'),
+                                    ],
+                                    ),
+                                ),
+                                actions: [
+                                    TextButton(
+                                    child: const Text('OK'),
+                                    onPressed: (){
+                                        Navigator.pop(context);
+                                        Item.itemList.add(Item(_name, _amount, _description));
+                                    },
+                                    ),
+                                ],
+                                );
+                            }
+                            );
+                        }
+                        _formkey.currentState!.reset();
+                        },
+                        child: const Text(
+                        "Save",
+                        style: TextStyle(color: Colors.white),
+                        ),
+                    ),
+                    ),
+                )
+            ],),
+            ),
+        ),
+        );
+    }
+    }
+    ```
+2. Menambahkan routing pada `item_cards.dart` dan `left_drawer.dart`
+- `left_drawer.dart`:
+    ```
+    ListTile(
+        leading: const Icon(Icons.add_shopping_cart),
+        title: const Text('Tambah Item'),
+        // Bagian redirection ke ShopFormPage
+        onTap: () {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                builder: (context) => const BackPackForm(),
+                ));
+            },
+        ),
+    ```
+
+- `item_cards.dart`:
+    ```
+    if (item.name == "Tambah Item"){
+        Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const BackPackForm())
+        );
+    }
+    ```
