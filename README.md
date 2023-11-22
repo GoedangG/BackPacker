@@ -417,14 +417,39 @@ Penerapannya dibagi menjadi 3 lapisan utama:
 # TUGAS 9
 
 ### 1. Apakah bisa kita melakukan pengambilan data JSON tanpa membuat model terlebih dahulu? Jika iya, apakah hal tersebut lebih baik daripada membuat model sebelum melakukan pengambilan data JSON?
+Bisa, kita dapat mengambil data JSON tanpa membuat model dengan menggunakan tipe data Map<String, dynamic> pada flutter untuk mengambil data JSON secara dinamis, namun cara ini dapat dikatakan kurang efekti karena tidak ada pengecekan tipe data selama pengambilan data JSON. Pembuatan model akan memperjelas struktur data yang diambil dari JSON, dan meningkatkan keamanan saat kompilasi, dan mempermudah pengelolaan data.
 
-
-### 2. Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
+## 2. Jelaskan fungsi dari CookieRequest dan jelaskan mengapa instance CookieRequest perlu untuk dibagikan ke semua komponen di aplikasi Flutter.
+CookieRequest merupakan salah satu bagian dari http package pada Flutter yang digunakan untuk mengelola permintaan HTTP. CookieRequest dapat mengatur dan menyimpan informasi tentang cookie, yang kemudian dapat digunakan untuk berinteraksi dengan server. Alasan mengapa instance CookieRequest perlu dibagikan ke semua komponen pada aplikasi Flutter adalah agar semua komponen di aplikasi Flutter dapat berbagi informasi cookie yang sama dan mencegah adanya kesalahan dalam managemen cookie.
 
 ### 3. Jelaskan mekanisme pengambilan data dari JSON hingga dapat ditampilkan pada Flutter.
+1. HTTP Request: menggunakan package http untuk request JSON API.
+2. Parse JSON: decode JSON menggunakan dart convert.
+3. Membuat Dart object: setelah di parse, dibuat object dart untuk ditampilkan.
+4. Display interface: menampilkan di aplikasi.
 
 ### 4. Jelaskan mekanisme autentikasi dari input data akun pada Flutter ke Django hingga selesainya proses autentikasi oleh Django dan tampilnya menu pada Flutter.
+- Pengguna memasukan informasi akun seperti username dan password yang akan diambil oleh aplikasi Flutter
+- Aplikasi flutter akan mengirikan permintaan melalui HTTP POST ke server Django yang berisi informasi pengguna
+- Server Django akan menerima dan melakukan proses autentikasi serta validasi akun. Jika valid, maka Django akan membuat token sesi untuk dikirimkan kepada aplikasi Flutter.
+- Aplikasi Flutter akan menerima token sesi dari server Django dan disimpan untuk penggunaan selanjutnya.
+- Setelah tahap autentikasi berhasil, aplikasi Flutter akan kembali ke halaman utama menggunakan Navigator dan menampilkan halaman dengan informasi yang sesuai kepada pengguna.
 
 ### 5. Sebutkan seluruh widget yang kamu pakai pada tugas ini dan jelaskan fungsinya masing-masing.
+- `future`: Representasi nilai atau kesalahan yang mungkin terjadi di masa depan.
+- `FutureBuilder`: Mengelola state Future untuk menangani data asynchronous.
+- `GridView.count`: Tata letak grid dengan jumlah kolom yang dapat diatur.
 
 ### 6. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step! (bukan hanya sekadar mengikuti tutorial).
+- Membuat `django-app` baru bernama `authentication` dan menambahkan app tersebut ke dalam `INSTALLED_APPS` pada settings.py di folder project utama
+- Menginstall `django-cors-headers` dan menambahkannya juga ke `INSTALLED_APPS` pada settings.py di folder project utama
+- Menambahkan `'corsheaders.middleware.CorsMiddleware'`.
+- Membuat `views.py` pada app authentication yang berisi function untuk login
+- Membuat file `urls.py` untuk URL routing pada folder `authentication` dan menambahkan path dari `urls.py`
+- Pada aplikasi Flutter, instal package berikut :
+    ```
+    flutter pub add provider
+    flutter pub add pbp_django_auth
+    ``` 
+- Memodifikasi root widget pada `main.dart`
+- Membuat file `login.dart`
