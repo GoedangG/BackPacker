@@ -1,7 +1,7 @@
 import 'package:bayu_inventory/screens/menu.dart';
 import 'package:flutter/material.dart';
-// import 'package:pbp_django_auth/pbp_django_auth.dart';
-// import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const LoginApp());
@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                 // Untuk menyambungkan Android emulator dengan Django pada localhost,
                 // gunakan URL http://10.0.2.2/
                 final response =
-                    await request.login("http://<APP_URL_KAMU>/auth/login/", {
+                    await request.login('http://127.0.0.1:8000/json/', {
                   'username': username,
                   'password': password,
                 });

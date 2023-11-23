@@ -1,63 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:bayu_inventory/widgets/left_drawer.dart';
+import 'dart:convert';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:bayu_inventory/screens/menu.dart';
 
-class Item {
-  static List<Item> itemList = [];
-  String name;
-  int amount;
-  String description;
-
-  Item(this.name, this.amount, this.description);
-}
-
-class BackPackForm extends StatefulWidget{
+class BackPackForm extends StatefulWidget {
   const BackPackForm({super.key});
-  
+
   @override
   State<BackPackForm> createState() => _BackPackFormState();
 }
 
 class _BackPackFormState extends State<BackPackForm> {
-  final _formkey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   String _name = "";
   int _amount = 0;
   String _description = "";
-  
+
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(
           child: Text(
-            'Form Tambah Item',
+            'Tambah Item',
           ),
         ),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.blueGrey,
         foregroundColor: Colors.white,
       ),
       drawer: const LeftDrawer(),
       body: Form(
-        key: _formkey,
+        key: _formKey,
         child: SingleChildScrollView(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
                 decoration: InputDecoration(
-                  hintText: "Nama Item",
-                  labelText: "Nama Item",
+                  hintText: "Name",
+                  labelText: "Name",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)
-                  )
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
                 ),
-                onChanged: (String? value){
+                onChanged: (String? value) {
                   setState(() {
                     _name = value!;
                   });
                 },
-                validator: (String? value){
-                  if (value == null || value.isEmpty){
-                    return "Nama Item tidak boleh kosong!";
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return "Nama tidak boleh kosong!";
                   }
                   return null;
                 },
@@ -73,20 +70,18 @@ class _BackPackFormState extends State<BackPackForm> {
                     borderRadius: BorderRadius.circular(5.0),
                   ),
                 ),
-                onChanged: (String? value){
+                onChanged: (String? value) {
                   setState(() {
                     _amount = int.parse(value!);
                   });
                 },
-                validator: (String? value){
-                  if (value == null || value.isEmpty){
-                    return "Jumlah Item tidak boleh kosong";
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return "Jumlah tidak boleh kosong!";
                   }
-
-                  if(int.tryParse(value) == null){
-                    return "Harus berupa angka!";
+                  if (int.tryParse(value) == null) {
+                    return "Jumlah harus berupa angka!";
                   }
-        
                   return null;
                 },
               ),
@@ -98,70 +93,66 @@ class _BackPackFormState extends State<BackPackForm> {
                   hintText: "Description",
                   labelText: "Description",
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)
+                    borderRadius: BorderRadius.circular(5.0),
                   ),
                 ),
-                onChanged: (String? value){
+                onChanged: (String? value) {
                   setState(() {
                     _description = value!;
                   });
                 },
-                validator: (String? value){
-                  if (value == null || value.isEmpty){
-                    return "Description tidak boleh kosong!";
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return "Deskripsi tidak boleh kosong!";
                   }
                   return null;
                 },
-              ), 
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.green),
-                    ),
-                    onPressed: (){
-                      if (_formkey.currentState!.validate()){
-                        showDialog(
-                          context: context,
-                          builder: (context){
-                            return AlertDialog(
-                              title:  const Text('Item berhasil tersimpan'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Nama Item: $_name'),
-                                    Text('Amount: $_amount'),
-                                    Text('Description: $_description'),
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: (){
-                                    Navigator.pop(context);
-                                    Item.itemList.add(Item(_name, _amount, _description));
-                                  },
-                                ),
-                              ],
-                            );
-                          }
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.blueGrey),
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      // Kirim ke Django dan tunggu respons
+                      final response = await request.postJson(
+                          "http://127.0.0.1:8000/create-flutter/",
+                          jsonEncode(<String, String>{
+                            'name': _name,
+                            'amount': _amount.toString(),
+                            'description': _description,
+                          }));
+                      if (response['status'] == 'success') {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text("Produk baru berhasil disimpan!"),
+                        ));
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyHomePage()),
                         );
+                      } else {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content:
+                              Text("Terdapat kesalahan, silakan coba lagi."),
+                        ));
                       }
-                      _formkey.currentState!.reset();
-                    },
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    }
+                  },
+                  child: const Text(
+                    "Save",
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
-              )
-          ],),
+              ),
+            ),
+          ]),
         ),
       ),
     );
